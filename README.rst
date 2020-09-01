@@ -48,6 +48,7 @@ The format of the file is as follows:
          ...
 
 To add some safety around this file you should use the `commit-single-file` utility:
+
 .. code-block:: shell
 
     $ commit-single-file --push
