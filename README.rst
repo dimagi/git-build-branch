@@ -6,9 +6,6 @@ git-branch-builder
 .. image:: https://img.shields.io/pypi/v/git-branch-builder.svg
         :target: https://pypi.python.org/pypi/git-branch-builder
 
-.. image:: https://img.shields.io/travis/dimagi/git-branch-builder.svg
-        :target: https://travis-ci.com/dimagi/git-branch-builder
-
 
 Utility tool for building Git branches my merging multiple other branches together.
 
