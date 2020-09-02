@@ -343,7 +343,7 @@ def main():
     parser.add_argument("actions", nargs="*")
     parser.add_argument("-p", "--path", default=".", help="Path to the repository")
     parser.add_argument("-v", "--verbose")
-    parser.add_argument("--no-push", action="store_true", help="Do not push the changes to remote git repository.")
+    parser.add_argument("--push", action="store_true", help="Push the changes to remote git repository.")
     args, unknown_args = parser.parse_known_args()
 
     git = get_git()
@@ -374,15 +374,14 @@ def main():
 
     if not args.actions:
         args.actions = 'fetch sync rebuild'.split()
-    push = not args.no_push
     with DisableGitHooks(), ShVerbose(args.verbose):
         print("\nRebuilding '{}' branch.".format(repo_config.name))
         if 'fetch' in args.actions:
             fetch_remote(repo_config, code_root)
         if 'sync' in args.actions:
-            sync_local_copies(repo_config, code_root, push=push)
+            sync_local_copies(repo_config, code_root, push=args.push)
         if 'rebuild' in args.actions:
-            rebuild_staging(repo_config, code_root, push=push)
+            rebuild_staging(repo_config, code_root, push=args.push)
 
 
 if __name__ == "__main__":
