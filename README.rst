@@ -45,7 +45,7 @@ To add some safety around this file you should use the `commit-single-file` util
 
 .. code-block:: shell
 
-    $ commit-single-file --push
+    commit-single-file --push
 
 Building the branch
 ~~~~~~~~~~~~~~~~~~~
@@ -53,8 +53,8 @@ This configuration file can be used to build a deploy branch:
 
 .. code-block:: bash
 
-    $ git checkout master
-    $ brancher path/to/branches.yml
+    git checkout master
+    brancher path/to/branches.yml
 
 Conflict Resolution
 ~~~~~~~~~~~~~~~~~~~
@@ -65,12 +65,12 @@ a). branch `foo` conflicts with `master`
 
 .. code-block:: shell
 
-    $ git checkout -b foo origin/foo
-    $ git pull origin master
+    git checkout -b foo origin/foo
+    git pull origin master
 
     # try to resolve conflict
 
-    $ git push origin foo
+    git push origin foo
 
 b). branch `foo` conflicts with branch `bar`
 
@@ -80,12 +80,12 @@ conflict-resolution branch:
 
 .. code-block:: shell
 
-    $ git checkout -b foo+bar --no-track origin/foo
-    $ git pull origin bar
+    git checkout -b foo+bar --no-track origin/foo
+    git pull origin bar
 
     # try to resolve conflict
 
-    $ git push origin foo+bar
+    git push origin foo+bar
 
 Now add the branch `foo+bar` to `branches.yml` and move branches foo and
 bar to right below it.
