@@ -1,13 +1,13 @@
-========
-brancher
-========
+==================
+git-branch-builder
+==================
 
 
-.. image:: https://img.shields.io/pypi/v/brancher.svg
-        :target: https://pypi.python.org/pypi/brancher
+.. image:: https://img.shields.io/pypi/v/git-branch-builder.svg
+        :target: https://pypi.python.org/pypi/git-branch-builder
 
-.. image:: https://img.shields.io/travis/skelly/brancher.svg
-        :target: https://travis-ci.com/skelly/brancher
+.. image:: https://img.shields.io/travis/dimagi/git-branch-builder.svg
+        :target: https://travis-ci.com/dimagi/git-branch-builder
 
 
 Utility tool for building Git branches my merging multiple other branches together.
@@ -54,7 +54,7 @@ This configuration file can be used to build a deploy branch:
 .. code-block:: bash
 
     git checkout master
-    brancher path/to/branches.yml
+    git-branch-builder path/to/branches.yml
 
 Conflict Resolution
 ~~~~~~~~~~~~~~~~~~~

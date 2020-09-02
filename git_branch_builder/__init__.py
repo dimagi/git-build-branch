@@ -1,4 +1,4 @@
-"""Top-level package for brancher."""
+"""Top-level package for git-branch-builder."""
 
 __author__ = """Simon Kelly"""
 __email__ = 'skelly@dimagi.com'
