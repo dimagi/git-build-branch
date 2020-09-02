@@ -50,6 +50,6 @@ setup(
     packages=find_packages(include=['git_branch_builder', 'git_branch_builder.*']),
     setup_requires=setup_requirements,
     url='https://github.com/dimagi/git-branch-builder',
-    version='0.1.2',
+    version='0.1.3',
     zip_safe=False,
 )
