@@ -51,11 +51,11 @@ class BranchConfig(jsonobject.JsonObject):
         return self.trunk in git_recent_tags(path)
 
 
-def fetch_remote(base_config, name="origin"):
+def fetch_remote(base_config, path, name="origin"):
     jobs = []
     seen = set()
     fetched = set()
-    for path, config in base_config.span_configs((base_config.root,)):
+    for path, config in base_config.span_configs((path,)):
         if path in seen:
             continue
         seen.add(path)
@@ -116,14 +116,14 @@ def origin(branch):
     return "origin/{}".format(branch)
 
 
-def sync_local_copies(config, push=True):
+def sync_local_copies(config, path, push=True):
     base_config = config
     unpushed_branches = []
 
     def _count_commits(compare_spec):
         return int(sh.wc(git.log(compare_spec, '--oneline', _piped=True), '-l'))
 
-    for path, config in base_config.span_configs((base_config.root,)):
+    for path, config in base_config.span_configs((path,)):
         git = get_git(path)
         with OriginalBranch(git):
             for branch in [config.trunk] + config.branches:
@@ -159,10 +159,10 @@ def sync_local_copies(config, push=True):
         print("All branches up-to-date.")
 
 
-def rebuild_staging(config, print_details=True, push=True):
+def rebuild_staging(config, path, print_details=True, push=True):
     merge_conflicts = []
     not_found = []
-    all_configs = list(config.span_configs((config.root,)))
+    all_configs = list(config.span_configs((path,)))
     with ExitStack() as stack:
         for path, _ in all_configs:
             stack.enter_context(OriginalBranch(get_git(path)))
@@ -341,6 +341,7 @@ def main():
     parser = argparse.ArgumentParser(description='Rebuild the deploy branch for an environment')
     parser.add_argument("config_path", help="Path to the YAML configuration file")
     parser.add_argument("actions", nargs="*")
+    parser.add_argument("-p", "--path", default=".", help="Path to the repository")
     parser.add_argument("-v", "--verbose")
     parser.add_argument("--no-push", action="store_true", help="Do not push the changes to remote git repository.")
     args, unknown_args = parser.parse_known_args()
@@ -357,54 +358,31 @@ def main():
     with open(args.config_path) as config_yaml:
         config = yaml.safe_load(config_yaml)
 
-    repositories = {
-        repo: BranchConfig.wrap(repo_config)
-        for repo, repo_config in config.items()
-    }
-    for repo, repo_config in repositories.items():
-        repo_config.normalize()
-        arg_name = "--{}".format(repo)
-        env_var = "{}_ROOT".format(re.sub("[/-]", "_", repo).upper())
+    code_root = os.path.abspath(args.path)
+    if not os.path.exists(code_root):
+        print(red("Repository path does not exist: {}".format(code_root)))
+        exit(1)
 
-        code_root = None
-        try:
-            index = unknown_args.index(arg_name)
-            code_root = unknown_args[index]
-        except (ValueError, IndexError):
-            pass
+    repo_config = BranchConfig.wrap(config)
+    repo_config.normalize()
 
-        if not code_root:
-            code_root = os.environ.get(env_var)
+    if not repo_config.check_trunk_is_recent(code_root):
+        print("The trunk is not based on a very recent commit")
+        print("Consider using one of the following:")
+        print(git_recent_tags(code_root))
+        exit(1)
 
-        if not code_root:
-            code_root = raw_input("Please supply the location of the '{}' repo: ".format(repo))
-
-        if not code_root or not os.path.exists(code_root):
-            print(red(
-                "Path for repo '{}' must be supplied. "
-                "Consider using the '{}' argument or setting the '{}' environment variable".format(repo, arg_name, env_var)
-            ))
-            exit(1)
-        repo_config.root = os.path.abspath(code_root)
-
-    for config in repositories.values():
-        if not config.check_trunk_is_recent(config.root):
-            print("The trunk is not based on a very recent commit")
-            print("Consider using one of the following:")
-            print(git_recent_tags(config.root))
-            exit(1)
     if not args.actions:
         args.actions = 'fetch sync rebuild'.split()
     push = not args.no_push
     with DisableGitHooks(), ShVerbose(args.verbose):
-        for repo, config in repositories.items():
-            print("\nRebuilding '{}' branch in '{}' repo.".format(config.name, repo))
-            if 'fetch' in args.actions:
-                fetch_remote(config)
-            if 'sync' in args.actions:
-                sync_local_copies(config, push=push)
-            if 'rebuild' in args.actions:
-                rebuild_staging(config, push=push)
+        print("\nRebuilding '{}' branch.".format(repo_config.name))
+        if 'fetch' in args.actions:
+            fetch_remote(repo_config, code_root)
+        if 'sync' in args.actions:
+            sync_local_copies(repo_config, code_root, push=push)
+        if 'rebuild' in args.actions:
+            rebuild_staging(repo_config, code_root, push=push)
 
 
 if __name__ == "__main__":

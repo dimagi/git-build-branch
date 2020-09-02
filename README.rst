@@ -26,26 +26,21 @@ The format of the file is as follows:
 
 .. code-block:: yaml
 
-    organization/repo:  # name of the git repo
-        trunk: master
-        name: autostaging  # name of the branch to build
-        branches:  # list of branches to merge into final branch
+    trunk: master
+    name: autostaging  # name of the branch to build
+    branches:  # list of branches to merge into final branch
+      - feature1
+      - feature2
+      - forkowner:feature3 # branch from fork of repository
+    submodules:
+      submodules/module1:
+        branches:
           - feature1
+          - forkowner:feature2 # branch from fork of repository
+      submodules/module2:
+        trunk: develop
+        branches:
           - feature2
-          - forkowner:feature3 # branch from fork of repository
-        submodules:
-          submodules/module1:
-            branches:
-              - feature1
-              - forkowner:feature2 # branch from fork of repository
-          submodules/module2:
-            trunk: develop
-            branches:
-              - feature2
-
-    another/repo:
-         trunk: master
-         ...
 
 To add some safety around this file you should use the `commit-single-file` utility:
 
@@ -60,7 +55,7 @@ This configuration file can be used to build a deploy branch:
 .. code-block:: bash
 
     $ git checkout master
-    $ brancher path/to/branches.yml --organization-repo=/path/to/git/repo --another-repo=/path/to/other/repo
+    $ brancher path/to/branches.yml
 
 Conflict Resolution
 ~~~~~~~~~~~~~~~~~~~
