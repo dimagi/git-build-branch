@@ -50,6 +50,6 @@ setup(
     packages=find_packages(include=['brancher', 'brancher.*']),
     setup_requires=setup_requirements,
     url='https://github.com/skelly/brancher',
-    version='0.1.1',
+    version='0.1.2',
     zip_safe=False,
 )

@@ -2,4 +2,4 @@
 
 __author__ = """Simon Kelly"""
 __email__ = 'skelly@dimagi.com'
-__version__ = '0.1.1'
+__version__ = '0.1.2'
