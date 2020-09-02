@@ -349,7 +349,7 @@ def main():
     git = get_git()
     print("Fetching master")
     git.fetch("origin", "master")
-    if not args.no_push:
+    if args.push:
         print("Checking branch config for modifications")
         if git.diff("origin/master", "--", args.config_path):
             print(red("'{}' on this branch different from the one on master".format(args.config_path)))
