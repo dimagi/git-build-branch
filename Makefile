@@ -35,6 +35,9 @@ clean-pyc: ## remove Python file artifacts
 lint: ## check style with flake8
 	flake8 brancher tests
 
+release-test: dist ## package and upload a release
+	twine upload dist/* --repository-url=https://test.pypi.org/legacy/
+
 release: dist ## package and upload a release
 	twine upload dist/*
 

@@ -14,7 +14,6 @@ Utility tool for building Git branches my merging multiple other branches togeth
 
 
 * Free software: BSD license
-* Documentation: https://brancher.readthedocs.io.
 
 
 Documentation

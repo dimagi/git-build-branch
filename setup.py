@@ -18,8 +18,6 @@ requirements = [
 
 setup_requirements = ['pytest-runner', ]
 
-test_requirements = ['pytest>=3', ]
-
 setup(
     author="Simon Kelly",
     author_email='skelly@dimagi.com',
@@ -51,8 +49,6 @@ setup(
     name='brancher',
     packages=find_packages(include=['brancher', 'brancher.*']),
     setup_requires=setup_requirements,
-    test_suite='tests',
-    tests_require=test_requirements,
     url='https://github.com/skelly/brancher',
     version='0.1.0',
     zip_safe=False,
