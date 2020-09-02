@@ -2,9 +2,7 @@ pip
 pip-tools
 bump2version
 wheel
-watchdog
 twine
 flake8
 flake8-isort
-pre-commit
 isort
