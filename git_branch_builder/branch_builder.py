@@ -342,9 +342,9 @@ def main():
     parser.add_argument("config_path", help="Path to the YAML configuration file")
     parser.add_argument("actions", nargs="*")
     parser.add_argument("-p", "--path", default=".", help="Path to the repository")
-    parser.add_argument("-v", "--verbose")
+    parser.add_argument("-v", "--verbose", action="store_true")
     parser.add_argument("--push", action="store_true", help="Push the changes to remote git repository.")
-    args, unknown_args = parser.parse_known_args()
+    args = parser.parse_args()
 
     git = get_git()
     print("Fetching master")

@@ -38,7 +38,7 @@ setup(
     entry_points={
         'console_scripts': [
             'git-branch-builder=git_branch_builder.branch_builder:main',
-            'commit-single-file=git_branch_builder.commit_single_file:main',
+            'safe-commit-files=git_branch_builder.safe_commit_files:main',
         ],
     },
     install_requires=requirements,
