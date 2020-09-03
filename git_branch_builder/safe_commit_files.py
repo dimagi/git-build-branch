@@ -2,7 +2,6 @@ from __future__ import print_function, absolute_import
 
 import argparse
 import os
-import re
 
 import sh
 from sh import ErrorReturnCode
