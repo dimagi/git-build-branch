@@ -12,7 +12,7 @@ requirements = [
     'gevent>=1.4.0',
     'jsonobject>=0.9.9',
     'sh>=1.0.9',
-    'pyaml>=20.4.0',
+    'PyYAML>=5.1',
     'contextlib2>=0.5.5',
 ]
 
