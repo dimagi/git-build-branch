@@ -9,11 +9,11 @@ with open('README.rst') as readme_file:
 
 requirements = [
     'Click>=7.0',
-    'gevent>=20.6.0',
+    'gevent>=1.4.0',
     'jsonobject>=0.9.9',
-    'sh>=1.14.0',
+    'sh>=1.0.9',
     'pyaml>=20.4.0',
-    'contextlib2>=0.6.0',
+    'contextlib2>=0.5.5',
 ]
 
 setup_requirements = ['pytest-runner', ]
