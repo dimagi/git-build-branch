@@ -40,9 +40,6 @@ def main():
             staged = sh.grep(git.diff("--staged", "--stat"), "|")
         except ErrorReturnCode as e:
             print("You have no changes to commit.")
-            print(e.stdout)
-            print(e.stderr)
-            print(e.exit_code)
             exit(1)
 
         staged_files = filter(None, [line.split("|")[0].strip() for line in staged.split("\n")])
