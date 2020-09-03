@@ -14,19 +14,21 @@ _original_init = sh.RunningCommand.__init__
 
 
 def _verbose_init(self, cmd, call_args, stdin, stdout, stderr):
+    encoding = sys.stdout.encoding
+
     print("[{cwd}]$ {command}".format(
         cwd=format_cwd(call_args['cwd']),
-        command=' '.join(cmd[0].rsplit('/', 1)[1:] + cmd[1:]),
+        command=(b' '.join(cmd[0].rsplit(b'/', 1)[1:] + cmd[1:])).decode(encoding),
     ))
     try:
         _original_init(self, cmd, call_args, stdin, stdout, stderr)
     except sh.ErrorReturnCode as e:
-        sys.stdout.write(e.stdout)
-        sys.stderr.write(e.stderr)
+        sys.stdout.write(e.stdout.decode(encoding))
+        sys.stderr.write(e.stderr.decode(encoding))
         raise
     else:
-        sys.stdout.write(self.stdout)
-        sys.stderr.write(self.stderr)
+        sys.stdout.write(self.stdout.decode(encoding))
+        sys.stderr.write(self.stderr.decode(encoding))
 
 
 def patch_sh_verbose():
