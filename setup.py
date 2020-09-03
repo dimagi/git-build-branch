@@ -19,8 +19,8 @@ requirements = [
 setup_requirements = ['pytest-runner', ]
 
 setup(
-    author="Simon Kelly",
-    author_email='skelly@dimagi.com',
+    author="Dimagi",
+    author_email='dev@dimagi.com',
     classifiers=[
         'Development Status :: 2 - Pre-Alpha',
         'Intended Audience :: Developers',
