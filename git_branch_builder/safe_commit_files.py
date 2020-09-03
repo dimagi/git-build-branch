@@ -16,7 +16,7 @@ git = get_git()
 
 def get_branch():
     branch = sh.sed(grep(git.branch(), "^\\*"), "s/* //")
-    return branch.stdout.strip()
+    return branch.stdout.strip().decode()
 
 
 def main():
