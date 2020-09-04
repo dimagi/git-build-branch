@@ -4,12 +4,13 @@
 Dev Setup
 ============
 
-Here's how to set up `git-branch-builder` for local development.
+Here's how to set up `git-build-branch` for local development.
 
-1. Install your local copy into a virtualenv. Assuming you have virtualenvwrapper installed, this is how you set up for local development::
+1. Install your local copy into a virtualenv. Assuming you have virtualenvwrapper installed, this is how you set up
+for local development::
 
-    $ mkvirtualenv branch-builder
-    $ cd branch-builder/  # cloned repo
+    $ mkvirtualenv git-build-branch
+    $ cd git-build-branch/  # cloned repo
     $ pip install -r requirements_dev.txt
 
 

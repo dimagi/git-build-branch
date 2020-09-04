@@ -1,10 +1,10 @@
 ==================
-git-branch-builder
+git-build-branch
 ==================
 
 
-.. image:: https://img.shields.io/pypi/v/git-branch-builder.svg
-        :target: https://pypi.python.org/pypi/git-branch-builder
+.. image:: https://img.shields.io/pypi/v/git-build-branch.svg
+        :target: https://pypi.python.org/pypi/git-build-branch
 
 
 Utility tool for building Git branches my merging multiple other branches together.
@@ -38,11 +38,11 @@ The format of the file is as follows:
         branches:
           - feature2
 
-To add some safety around this file you should use the `commit-single-file` utility:
+To add some safety around this file you should use the `safe-commit-files` utility:
 
 .. code-block:: shell
 
-    commit-single-file --push
+    safe-commit-files --push /path/to/branch_config.yml
 
 Building the branch
 ~~~~~~~~~~~~~~~~~~~
@@ -51,7 +51,7 @@ This configuration file can be used to build a deploy branch:
 .. code-block:: bash
 
     git checkout master
-    git-branch-builder path/to/branches.yml
+    git-build-branch path/to/branch_config.yml
 
 Conflict Resolution
 ~~~~~~~~~~~~~~~~~~~
@@ -84,10 +84,10 @@ conflict-resolution branch:
 
     git push origin foo+bar
 
-Now add the branch `foo+bar` to `branches.yml` and move branches foo and
+Now add the branch `foo+bar` to `branch_config.yml` and move branches foo and
 bar to right below it.
 
-Later on branch B gets merged into master and removed from `branches.yml`.
+Later on branch B gets merged into master and removed from `branch_config.yml`.
 
 Perhaps the person who removes it also notices the A+B and does the
 following. Otherwise anyone who comes along and sees A+B but not both
@@ -96,7 +96,7 @@ branches can feel free to assume the following need to be done.
 * Merge A+B into A. Since B is now gone, you want to merge the
   resolution into A, otherwise A will conflict with master.
 
-* Remove A+B from `deploy_branches.yml`. It's no longer necessary since it's
+* Remove A+B from `branch_config.yml`. It's no longer necessary since it's
   now a subset of A.
 
 If you are unsure of how to resolve a conflict, notify the branch owner.

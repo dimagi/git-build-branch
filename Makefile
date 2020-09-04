@@ -33,7 +33,7 @@ clean-pyc: ## remove Python file artifacts
 	find . -name '__pycache__' -exec rm -fr {} +
 
 lint: ## check style with flake8
-	flake8 git_branch_builder
+	flake8 git_build_branch
 
 release-test: dist ## package and upload a release
 	twine upload dist/* --repository-url=https://test.pypi.org/legacy/
