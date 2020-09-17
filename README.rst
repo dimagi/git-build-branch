@@ -38,7 +38,7 @@ The format of the file is as follows:
         branches:
           - feature2
 
-To add some safety around this file you should use the `safe-commit-files` utility:
+To add some safety around this file you should use the ``safe-commit-files`` utility:
 
 .. code-block:: shell
 
