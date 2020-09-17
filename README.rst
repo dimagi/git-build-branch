@@ -58,7 +58,7 @@ Conflict Resolution
 
 First, determine where the conflict lies.
 
-a). branch `foo` conflicts with `master`
+a). branch ``foo`` conflicts with ``master``
 
 .. code-block:: shell
 
@@ -69,7 +69,7 @@ a). branch `foo` conflicts with `master`
 
     git push origin foo
 
-b). branch `foo` conflicts with branch `bar`
+b). branch ``foo`` conflicts with branch ``bar``
 
 You can't just merge foo into bar or vice versa, otherwise the PR
 for foo will contain commits from bar.  Instead make a third,
@@ -84,10 +84,10 @@ conflict-resolution branch:
 
     git push origin foo+bar
 
-Now add the branch `foo+bar` to `branch_config.yml` and move branches foo and
+Now add the branch ``foo+bar`` to ``branch_config.yml`` and move branches foo and
 bar to right below it.
 
-Later on branch B gets merged into master and removed from `branch_config.yml`.
+Later on branch B gets merged into master and removed from ``branch_config.yml``.
 
 Perhaps the person who removes it also notices the A+B and does the
 following. Otherwise anyone who comes along and sees A+B but not both
@@ -96,7 +96,7 @@ branches can feel free to assume the following need to be done.
 * Merge A+B into A. Since B is now gone, you want to merge the
   resolution into A, otherwise A will conflict with master.
 
-* Remove A+B from `branch_config.yml`. It's no longer necessary since it's
+* Remove A+B from ``branch_config.yml``. It's no longer necessary since it's
   now a subset of A.
 
 If you are unsure of how to resolve a conflict, notify the branch owner.
