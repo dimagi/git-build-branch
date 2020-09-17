@@ -7,7 +7,7 @@ git-build-branch
         :target: https://pypi.python.org/pypi/git-build-branch
 
 
-Utility tool for building Git branches my merging multiple other branches together.
+Utility tool for building Git branches by merging multiple other branches together.
 
 
 * Free software: BSD license
