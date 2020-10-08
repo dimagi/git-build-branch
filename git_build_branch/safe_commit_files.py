@@ -66,8 +66,8 @@ def main():
         if git.log("--max-count=1", "origin/{0}..{0}".format(branch)).strip():
             print("Your local '{0}' is ahead of 'origin/{0}'.".format(branch))
 
-        message = "'updating files: {}'".format(", ".join(files))
-        git.commit("--message", message, "--message", "'[ci skip]'")
+        message = "updating files: {}".format(", ".join(files))
+        git.commit("--message", message, "--message", "[ci skip]")
 
         if args.push:
             git.push("origin", branch)
