@@ -38,7 +38,7 @@ def main():
         git.add(*files)
         try:
             staged = sh.grep(git.diff("--staged", "--stat"), "|")
-        except ErrorReturnCode as e:
+        except ErrorReturnCode:
             print("You have no changes to commit.")
             exit(1)
 
@@ -49,7 +49,7 @@ def main():
 
         basenames = {os.path.basename(filename) for filename in files}
         staged_basenames = {os.path.basename(filename) for filename in staged_files}
-        if  basenames != staged_basenames:
+        if basenames != staged_basenames:
             print("Unexpected files staged: {}".format(", ".join(staged_files)))
             exit(1)
 
