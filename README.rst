@@ -12,6 +12,10 @@ Utility tool for building Git branches by merging multiple other branches togeth
 
 * Free software: BSD license
 
+For guidelines on contributing to the project please read the CONTRIBUTING_ documentation.
+
+.. _CONTRIBUTING: CONTRIBUTING.rst
+
 
 Documentation
 -------------
