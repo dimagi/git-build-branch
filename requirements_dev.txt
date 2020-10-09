@@ -4,21 +4,16 @@
 #
 #    `make requirements` or `make upgrade-requirements`
 #
-backports.functools-lru-cache==1.6.1  # via isort
 bleach==3.1.5             # via readme-renderer
 bump2version==0.5.11      # via -r requirements_dev.in
 certifi==2020.6.20        # via requests
 chardet==3.0.4            # via requests
 click==7.0                # via git-build-branch (setup.py), pip-tools
-configparser==4.0.2       # via entrypoints, flake8
 contextlib2==0.6.0.post1  # via git-build-branch (setup.py)
 docutils==0.16            # via readme-renderer
 entrypoints==0.3          # via flake8
-enum34==1.1.10            # via flake8
 flake8-isort==4.0.0       # via -r requirements_dev.in
 flake8==3.7.8             # via -r requirements_dev.in, flake8-isort
-functools32==3.2.3.post2  # via flake8
-futures==3.3.0            # via isort
 gevent==20.6.2            # via git-build-branch (setup.py)
 greenlet==0.4.16          # via gevent
 idna==2.10                # via requests
@@ -41,7 +36,6 @@ six==1.15.0               # via bleach, jsonobject, packaging, pip-tools, readme
 testfixtures==6.14.1      # via flake8-isort
 tqdm==4.48.2              # via twine
 twine==1.14.0             # via -r requirements_dev.in
-typing==3.7.4.3           # via flake8
 urllib3==1.25.10          # via requests
 webencodings==0.5.1       # via bleach
 wheel==0.33.6             # via -r requirements_dev.in

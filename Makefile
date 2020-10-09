@@ -53,6 +53,14 @@ requirements: export CUSTOM_COMPILE_COMMAND=`make requirements` or `make upgrade
 requirements:
 	pip-compile -o requirements_dev.txt setup.py requirements_dev.in
 
+requirements2: export CUSTOM_COMPILE_COMMAND=`make requirements2` or `make upgrade-requirements2`
+requirements2:
+	pip-compile -o requirements_dev_py2.txt setup.py requirements_dev.in
+
 upgrade-requirements: export CUSTOM_COMPILE_COMMAND=`make requirements` or `make upgrade-requirements`
 upgrade-requirements:
 	pip-compile --upgrade -o requirements_dev.txt setup.py requirements_dev.in --allow-unsafe
+
+upgrade-requirements2: export CUSTOM_COMPILE_COMMAND=`make requirements2` or `make upgrade-requirements2`
+upgrade-requirements2:
+	pip-compile --upgrade -o requirements_dev_py2.txt setup.py requirements_dev.in --allow-unsafe

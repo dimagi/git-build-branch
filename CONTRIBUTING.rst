@@ -11,8 +11,10 @@ for local development::
 
     $ mkvirtualenv git-build-branch
     $ cd git-build-branch/  # cloned repo
-    $ pip install -r requirements_dev.txt
+    $ pip install -r requirements_dev.txt (or requirements_dev_py2.txt for python2)
 
+
+See ``make`` output for common tools.
 
 Releasing
 ---------
@@ -24,3 +26,4 @@ Then run::
 $ bump2version patch # possible: major / minor / patch
 $ git push --tags
 $ make clean release
+
