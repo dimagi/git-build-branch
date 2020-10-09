@@ -38,7 +38,7 @@ def main():
         git.add(*files)
         try:
             staged = sh.grep(git.diff("--staged", "--stat"), "|")
-        except ErrorReturnCode as e:
+        except ErrorReturnCode:
             print("You have no changes to commit.")
             exit(1)
 
@@ -49,7 +49,7 @@ def main():
 
         basenames = {os.path.basename(filename) for filename in files}
         staged_basenames = {os.path.basename(filename) for filename in staged_files}
-        if  basenames != staged_basenames:
+        if basenames != staged_basenames:
             print("Unexpected files staged: {}".format(", ".join(staged_files)))
             exit(1)
 
@@ -66,8 +66,8 @@ def main():
         if git.log("--max-count=1", "origin/{0}..{0}".format(branch)).strip():
             print("Your local '{0}' is ahead of 'origin/{0}'.".format(branch))
 
-        message = "'updating files: {}'".format(", ".join(files))
-        git.commit("--message", message, "--message", "'[ci skip]'")
+        message = "updating files: {}".format(", ".join(files))
+        git.commit("--message", message, "--message", "[ci skip]")
 
         if args.push:
             git.push("origin", branch)
