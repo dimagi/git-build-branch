@@ -14,14 +14,13 @@ for local development::
     $ pip install -r requirements_dev.txt
 
 
-Deploying
+Releasing
 ---------
 
-A reminder for the maintainers on how to deploy.
+A reminder for the maintainers on how to make a release.
 Make sure all your changes are committed.
 Then run::
 
 $ bump2version patch # possible: major / minor / patch
-$ git push
 $ git push --tags
 $ make clean release
