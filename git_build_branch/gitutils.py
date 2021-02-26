@@ -66,9 +66,7 @@ def git_check_merge(branch1, branch2, git=None):
 
     """
     def format_branch(branch):
-        if ":" in branch:
-            branch = branch.replace(":", "/")
-        return branch
+        return branch.replace(":", "/")
 
     git = git or get_git()
     branch1 = format_branch(branch1)
