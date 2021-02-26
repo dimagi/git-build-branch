@@ -266,12 +266,9 @@ def print_conflicts(branch, config, git):
 
     conflict_found = False
     for other_branch in config.branches:
-        try:
-            if has_merge_conflict(branch, other_branch, git):
-                print(red("{} conflicts with {}".format(branch, other_branch)))
-                conflict_found = True
-        except sh.ErrorReturnCode_1:
-            print("Unable to check {} for conflicts".format(other_branch))
+        if has_merge_conflict(branch, other_branch, git):
+            print(red("{} conflicts with {}".format(branch, other_branch)))
+            conflict_found = True
 
     if not conflict_found:
         print_merge_details(branch, config.name, git,
