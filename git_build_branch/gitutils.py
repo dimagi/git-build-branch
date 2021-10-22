@@ -59,16 +59,16 @@ def git_submodules(git=None):
 
 def get_local_ref(git, branch):
     remote = ":" in branch
-    if remote or not has_local(git, branch):
-        if remote:
-            remote_branch = branch.replace(":", "/", 1)
-        else:
-            remote_branch = origin(branch)
-        if not has_remote(git, remote_branch):
-            path = git._partial_call_args.get("cwd") or os.getcwd()
-            raise MissingRemote(f"git ref '{remote_branch}' not found in {path}")
-        branch = remote_branch
-    return branch
+    if not remote and has_local(git, branch):
+        return branch
+    if remote:
+        remote_branch = branch.replace(":", "/", 1)
+    else:
+        remote_branch = origin(branch)
+    if not has_remote(git, remote_branch):
+        path = git._partial_call_args.get("cwd") or os.getcwd()
+        raise MissingRemote(f"git ref '{remote_branch}' not found in {path}")
+    return remote_branch
 
 
 def origin(branch):
