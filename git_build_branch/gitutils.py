@@ -177,9 +177,8 @@ if __name__ == '__main__':
         if len(args) == 2:
             print_merge_details(*args, git=get_git())
         else:
-            print ('usage: python scripts/gitutils.py '
-                   'show-conflict <branch1> <branch2>')
+            print('usage: python gitutils.py show-conflict <branch1> <branch2>')
     else:
-        print('usage: python scripts/gitutils.py <command> [args...]\n')
+        print('usage: python gitutils.py <command> [args...]\n')
         print('Available commands:')
         print(_left_pad('   ', '\n'.join(options)))
