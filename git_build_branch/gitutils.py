@@ -57,6 +57,50 @@ def git_submodules(git=None):
     return submodules
 
 
+def get_local_ref(git, branch):
+    remote = ":" in branch
+    if remote or not has_local(git, branch):
+        if remote:
+            remote_branch = branch.replace(":", "/", 1)
+        else:
+            remote_branch = origin(branch)
+        if not has_remote(git, remote_branch):
+            path = git._partial_call_args.get("cwd") or os.getcwd()
+            raise MissingRemote(f"git ref '{remote_branch}' not found in {path}")
+        branch = remote_branch
+    return branch
+
+
+def origin(branch):
+    return "origin/{}".format(branch)
+
+
+def has_local(git, branch):
+    """Return true if the named local branch exists"""
+    return has_ref(git, "refs/heads/{}".format(branch))
+
+
+def has_remote(git, ref):
+    """Return true if the named remote branch exists
+
+    :param ref: Remote ref (example: origin/branch-name)
+    """
+    return has_ref(git, "refs/remotes/{}".format(ref))
+
+
+def has_ref(git, ref):
+    """Return true if the named branch exists"""
+    try:
+        out = git("show-ref", "--verify", "--quiet", ref)
+    except sh.ErrorReturnCode:
+        return False
+    return out.exit_code == 0
+
+
+class MissingRemote(Exception):
+    pass
+
+
 def git_check_merge(branch1, branch2, git=None):
     """
     returns True if branch1 would auto-merge cleanly into branch2,
