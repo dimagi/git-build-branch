@@ -1,3 +1,4 @@
+import os
 import re
 
 import sh
@@ -109,12 +110,9 @@ def git_check_merge(branch1, branch2, git=None):
     Thanks to http://stackoverflow.com/a/501461/240553
 
     """
-    def format_branch(branch):
-        return branch.replace(":", "/")
-
     git = git or get_git()
-    branch1 = format_branch(branch1)
-    branch2 = format_branch(branch2)
+    branch1 = get_local_ref(git, branch1)
+    branch2 = get_local_ref(git, branch2)
     with ShVerbose(False):
         orig_branch = git_current_branch(git)
         git.checkout(branch2)
