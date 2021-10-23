@@ -13,13 +13,17 @@ import sh  # noqa E402
 import yaml  # noqa E402
 from contextlib2 import ExitStack  # noqa E402
 
-from .gitutils import (
+from .gitutils import (  # noqa E402
+    MissingRemote,
     OriginalBranch,
     get_git,
+    get_local_ref,
     git_recent_tags,
+    has_local,
     has_merge_conflict,
+    origin,
     print_merge_details,
-)  # noqa E402
+)
 
 from .sh_verbose import ShVerbose  # noqa E402
 
@@ -90,32 +94,6 @@ def remote_url(git, remote, original="origin"):
     return "https://github.com/{}/{}".format(remote, repo_name)
 
 
-def has_ref(git, ref):
-    """Return true if the named branch exists"""
-    try:
-        out = git("show-ref", "--verify", "--quiet", ref)
-    except sh.ErrorReturnCode:
-        return False
-    return out.exit_code == 0
-
-
-def has_local(git, branch):
-    """Return true if the named local branch exists"""
-    return has_ref(git, "refs/heads/{}".format(branch))
-
-
-def has_remote(git, ref):
-    """Return true if the named remote branch exists
-
-    :param ref: Remote ref (example: origin/branch-name)
-    """
-    return has_ref(git, "refs/remotes/{}".format(ref))
-
-
-def origin(branch):
-    return "origin/{}".format(branch)
-
-
 def sync_local_copies(config, path, push=True):
     base_config = config
     unpushed_branches = []
@@ -173,20 +151,12 @@ def rebuild_staging(config, path, print_details=True, push=True):
             except Exception:
                 git.checkout('-B', config.name, config.trunk, '--no-track')
             for branch in config.branches:
-                remote = ":" in branch
-                if remote or not has_local(git, branch):
-                    if remote:
-                        remote_branch = branch.replace(":", "/", 1)
-                    else:
-                        remote_branch = origin(branch)
-                    if not has_remote(git, remote_branch):
-                        not_found.append((path, branch))
-                        print("  [{cwd}] {branch} NOT FOUND".format(
-                            cwd=format_cwd(path),
-                            branch=branch,
-                        ))
-                        continue
-                    branch = remote_branch
+                try:
+                    branch = get_local_ref(git, branch)
+                except MissingRemote:
+                    not_found.append((path, branch))
+                    print(f"  [{format_cwd(path)}] {branch} NOT FOUND")
+                    continue
                 print("  [{cwd}] Merging {branch} into {name}".format(
                     cwd=path,
                     branch=branch,

@@ -1,3 +1,4 @@
+import os
 import re
 
 import sh
@@ -57,6 +58,50 @@ def git_submodules(git=None):
     return submodules
 
 
+def get_local_ref(git, branch):
+    remote = ":" in branch
+    if not remote and has_local(git, branch):
+        return branch
+    if remote:
+        remote_branch = branch.replace(":", "/", 1)
+    else:
+        remote_branch = origin(branch)
+    if not has_remote(git, remote_branch):
+        path = git._partial_call_args.get("cwd") or os.getcwd()
+        raise MissingRemote(f"git ref '{remote_branch}' not found in {path}")
+    return remote_branch
+
+
+def origin(branch):
+    return "origin/{}".format(branch)
+
+
+def has_local(git, branch):
+    """Return true if the named local branch exists"""
+    return has_ref(git, "refs/heads/{}".format(branch))
+
+
+def has_remote(git, ref):
+    """Return true if the named remote branch exists
+
+    :param ref: Remote ref (example: origin/branch-name)
+    """
+    return has_ref(git, "refs/remotes/{}".format(ref))
+
+
+def has_ref(git, ref):
+    """Return true if the named branch exists"""
+    try:
+        out = git("show-ref", "--verify", "--quiet", ref)
+    except sh.ErrorReturnCode:
+        return False
+    return out.exit_code == 0
+
+
+class MissingRemote(Exception):
+    pass
+
+
 def git_check_merge(branch1, branch2, git=None):
     """
     returns True if branch1 would auto-merge cleanly into branch2,
@@ -65,12 +110,9 @@ def git_check_merge(branch1, branch2, git=None):
     Thanks to http://stackoverflow.com/a/501461/240553
 
     """
-    def format_branch(branch):
-        return branch.replace(":", "/")
-
     git = git or get_git()
-    branch1 = format_branch(branch1)
-    branch2 = format_branch(branch2)
+    branch1 = get_local_ref(git, branch1)
+    branch2 = get_local_ref(git, branch2)
     with ShVerbose(False):
         orig_branch = git_current_branch(git)
         git.checkout(branch2)
@@ -177,9 +219,8 @@ if __name__ == '__main__':
         if len(args) == 2:
             print_merge_details(*args, git=get_git())
         else:
-            print ('usage: python scripts/gitutils.py '
-                   'show-conflict <branch1> <branch2>')
+            print('usage: python gitutils.py show-conflict <branch1> <branch2>')
     else:
-        print('usage: python scripts/gitutils.py <command> [args...]\n')
+        print('usage: python gitutils.py <command> [args...]\n')
         print('Available commands:')
         print(_left_pad('   ', '\n'.join(options)))
