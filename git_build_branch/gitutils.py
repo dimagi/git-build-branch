@@ -135,7 +135,10 @@ def git_check_merge(branch1, branch2, git=None):
 
 
 def has_merge_conflict(branch1, branch2, git):
-    return not git_check_merge(branch1, branch2, git=git)
+    try:
+        return not git_check_merge(branch1, branch2, git=git)
+    except MissingRemote:
+        return False
 
 
 def git_bisect_merge_conflict(branch1, branch2, git=None):
