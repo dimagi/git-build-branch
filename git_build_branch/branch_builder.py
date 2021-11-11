@@ -209,10 +209,10 @@ def rebuild_staging(config, path, print_details=True, push=True):
     if not_found:
         print("You must remove the following branches before rebuilding:")
         for cwd, branch in not_found:
-            print("  [{cwd}] {branch}".format(
+            print(red("  [{cwd}] {branch}".format(
                 cwd=format_cwd(cwd),
                 branch=branch,
-            ))
+            )))
     if merge_conflicts:
         print("You must fix the following merge conflicts before rebuilding:")
         for cwd, branch, config in merge_conflicts:
