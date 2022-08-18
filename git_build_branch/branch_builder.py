@@ -248,19 +248,9 @@ def print_conflicts(branch, config, git):
 def force_push(git, branch):
     try:
         git.push('origin', branch, '--force')
-    except sh.ErrorReturnCode_128 as e:
-        # oops we're using a read-only URL, so change to the suggested url
-        try:
-            line = sh.grep(git.remote("-v"),
-                           '-E', r'^origin.(https|git)://github\.com/.*\(push\)$')
-        except sh.ErrorReturnCode_1:
-            raise e
-        old_url = line.strip().split()[1]
-        prefix = "git" if old_url.startswith("git:") else "https"
-        new_url = old_url.replace(prefix + "://github.com/", "git@github.com:")
-        print("    {} -> {}".format(old_url, new_url))
-        git.remote('set-url', 'origin', new_url)
-        git.push('origin', branch, '--force')
+    except sh.ErrorReturnCode_128:
+        print(red("Failed to force push to origin. Please check your remote URL and ensure it accepts writes."))
+        raise
 
 
 def format_cwd(cwd):
