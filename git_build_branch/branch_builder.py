@@ -248,9 +248,9 @@ def print_conflicts(branch, config, git):
 def force_push(git, branch):
     try:
         git.push('origin', branch, '--force')
-    except sh.ErrorReturnCode_128 as e:
+    except sh.ErrorReturnCode_128:
         print(red("Failed to force push to origin. Please check your remote URL and ensure it accepts writes."))
-        raise e
+        raise
 
 
 def format_cwd(cwd):
