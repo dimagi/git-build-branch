@@ -21,7 +21,7 @@ Releasing
 
 A reminder for the maintainers on how to make a release.
 Make sure all your changes are committed.
-Then run::
+Then, from master, run::
 
 $ bump2version patch # possible: major / minor / patch
 $ git push --tags
