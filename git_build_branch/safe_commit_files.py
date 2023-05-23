@@ -10,6 +10,10 @@ from .checkyaml import checkyaml, YamlError
 from .gitutils import get_git, get_grep
 from .sh_verbose import ShVerbose
 
+# HACK: temporary solution to revert to v1 behavior of sh
+# see https://github.com/amoffat/sh/blob/develop/MIGRATION.md#return-value-now-a-true-string
+sh = sh.bake(_return_cmd=True)
+
 grep = get_grep()
 git = get_git()
 

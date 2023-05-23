@@ -27,6 +27,10 @@ from .gitutils import (  # noqa E402
 
 from .sh_verbose import ShVerbose  # noqa E402
 
+# HACK: temporary solution to revert to v1 behavior of sh
+# see https://github.com/amoffat/sh/blob/develop/MIGRATION.md#return-value-now-a-true-string
+sh = sh.bake(_return_cmd=True)
+
 
 class BranchConfig(jsonobject.JsonObject):
     trunk = jsonobject.StringProperty()

@@ -5,6 +5,10 @@ import sh
 
 from .sh_verbose import ShVerbose
 
+# HACK: temporary solution to revert to v1 behavior of sh
+# see https://github.com/amoffat/sh/blob/develop/MIGRATION.md#return-value-now-a-true-string
+sh = sh.bake(_return_cmd=True)
+
 
 def get_git(path=None):
     return sh.git.bake(_tty_out=False, _cwd=path)
