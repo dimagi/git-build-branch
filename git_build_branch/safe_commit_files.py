@@ -19,7 +19,7 @@ git = get_git()
 
 
 def get_branch():
-    branch = sh.sed(grep(git.branch(), "^\\*"), "s/* //")
+    branch = sh.sed("s/* //", _in=grep("^\\*", _in=git.branch()))
     return branch.stdout.strip().decode()
 
 
@@ -41,7 +41,7 @@ def main():
 
         git.add(*files)
         try:
-            staged = sh.grep(git.diff("--staged", "--stat"), "|")
+            staged = sh.grep("|", _in=git.diff("--staged", "--stat"))
         except ErrorReturnCode:
             print("You have no changes to commit.")
             exit(1)

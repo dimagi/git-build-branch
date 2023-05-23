@@ -41,7 +41,7 @@ class OriginalBranch(object):
 def git_current_branch(git=None):
     git = git or get_git()
     grep = get_grep()
-    branch = grep(git.branch(), '^* ').strip()[2:]
+    branch = grep('^*', _in=git.branch()).strip()[2:]
     if branch.startswith('('):
         branch = git.log('--pretty=oneline', n=1).strip().split(' ')[0]
     return branch
@@ -49,7 +49,7 @@ def git_current_branch(git=None):
 
 def git_recent_tags(grep_string="production-deploy", path=None):
     git, grep, tail = get_git(path), get_grep(), get_tail()
-    last_tags = tail(grep(git.tag('--sort=committerdate'), grep_string), n=4)
+    last_tags = tail(_in=grep(grep_string, _in=git.tag('--sort=committerdate')), n=4)
     return last_tags
 
 
@@ -168,7 +168,7 @@ def git_bisect_merge_conflict(branch1, branch2, git=None):
                     txt = git.bisect('bad')
             try:
                 # txt has a line that's like "<commit> is the first bad commit"
-                return grep(txt, ' is the first bad commit$').strip().split(' ')[0]
+                return grep(' is the first bad commit$', _in=txt).strip().split(' ')[0]
             except sh.ErrorReturnCode_1:
                 raise Exception('Error finding offending commit: '
                                 '"^commit" does not match\n{}'.format(txt))

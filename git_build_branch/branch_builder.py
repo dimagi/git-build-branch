@@ -93,7 +93,7 @@ def fetch_remote(base_config, path, name="origin"):
 
 
 def remote_url(git, remote, original="origin"):
-    origin_url = sh.grep(git.remote("-v"), original).split()[1]
+    origin_url = sh.grep(original, _in=git.remote("-v")).split()[1]
     repo_name = origin_url.rsplit("/", 1)[1]
     return "https://github.com/{}/{}".format(remote, repo_name)
 
@@ -103,7 +103,7 @@ def sync_local_copies(config, path, push=True):
     unpushed_branches = []
 
     def _count_commits(compare_spec):
-        return int(sh.wc(git.log(compare_spec, '--oneline', _piped=True), '-l'))
+        return int(sh.wc('-l', _in=git.log(compare_spec, '--oneline', _piped=True)))
 
     for path, config in base_config.span_configs((path,)):
         git = get_git(path)
