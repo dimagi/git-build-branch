@@ -82,7 +82,7 @@ rfc3986==2.0.0
     # via twine
 rich==12.5.1
     # via twine
-sh==2.0.4
+sh==1.14.3
     # via git-build-branch (setup.py)
 six==1.16.0
     # via

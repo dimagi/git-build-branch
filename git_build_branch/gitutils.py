@@ -5,10 +5,6 @@ import sh
 
 from .sh_verbose import ShVerbose
 
-# HACK: temporary solution to revert to v1 behavior of sh
-# see https://github.com/amoffat/sh/blob/develop/MIGRATION.md#return-value-now-a-true-string
-sh = sh.bake(_return_cmd=True)
-
 
 def get_git(path=None):
     return sh.git.bake(_tty_out=False, _cwd=path)
@@ -41,7 +37,7 @@ class OriginalBranch(object):
 def git_current_branch(git=None):
     git = git or get_git()
     grep = get_grep()
-    branch = grep('^*', _in=git.branch()).strip()[2:]
+    branch = grep(git.branch(), '^* ').strip()[2:]
     if branch.startswith('('):
         branch = git.log('--pretty=oneline', n=1).strip().split(' ')[0]
     return branch
@@ -49,7 +45,7 @@ def git_current_branch(git=None):
 
 def git_recent_tags(grep_string="production-deploy", path=None):
     git, grep, tail = get_git(path), get_grep(), get_tail()
-    last_tags = tail(n=4, _in=grep(grep_string, _in=git.tag('--sort=committerdate')))
+    last_tags = tail(grep(git.tag('--sort=committerdate'), grep_string), n=4)
     return last_tags
 
 
@@ -168,7 +164,7 @@ def git_bisect_merge_conflict(branch1, branch2, git=None):
                     txt = git.bisect('bad')
             try:
                 # txt has a line that's like "<commit> is the first bad commit"
-                return grep(' is the first bad commit$', _in=txt).strip().split(' ')[0]
+                return grep(txt, ' is the first bad commit$').strip().split(' ')[0]
             except sh.ErrorReturnCode_1:
                 raise Exception('Error finding offending commit: '
                                 '"^commit" does not match\n{}'.format(txt))

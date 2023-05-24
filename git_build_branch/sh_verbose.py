@@ -5,10 +5,6 @@ import sys
 
 import sh
 
-# HACK: temporary solution to revert to v1 behavior of sh
-# see https://github.com/amoffat/sh/blob/develop/MIGRATION.md#return-value-now-a-true-string
-sh = sh.bake(_return_cmd=True)
-
 
 def format_cwd(cwd):
     return os.path.join(cwd) if cwd else '.'

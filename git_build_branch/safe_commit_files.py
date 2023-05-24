@@ -10,16 +10,12 @@ from .checkyaml import checkyaml, YamlError
 from .gitutils import get_git, get_grep
 from .sh_verbose import ShVerbose
 
-# HACK: temporary solution to revert to v1 behavior of sh
-# see https://github.com/amoffat/sh/blob/develop/MIGRATION.md#return-value-now-a-true-string
-sh = sh.bake(_return_cmd=True)
-
 grep = get_grep()
 git = get_git()
 
 
 def get_branch():
-    branch = sh.sed("s/* //", _in=grep("^\\*", _in=git.branch()))
+    branch = sh.sed(grep(git.branch(), "^\\*"), "s/* //")
     return branch.stdout.strip().decode()
 
 
@@ -41,7 +37,7 @@ def main():
 
         git.add(*files)
         try:
-            staged = sh.grep("|", _in=git.diff("--staged", "--stat"))
+            staged = sh.grep(git.diff("--staged", "--stat"), "|")
         except ErrorReturnCode:
             print("You have no changes to commit.")
             exit(1)

@@ -11,7 +11,7 @@ requirements = [
     'Click>=7.0',
     'gevent>=1.4.0',
     'jsonobject>=0.9.9',
-    'sh>=2.0.0',
+    'sh>=1.0.9',
     'PyYAML>=5.1',
     'contextlib2>=0.5.5',
 ]
