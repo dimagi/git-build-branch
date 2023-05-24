@@ -49,7 +49,7 @@ def git_current_branch(git=None):
 
 def git_recent_tags(grep_string="production-deploy", path=None):
     git, grep, tail = get_git(path), get_grep(), get_tail()
-    last_tags = tail(_in=grep(grep_string, _in=git.tag('--sort=committerdate')), n=4)
+    last_tags = tail(n=4, _in=grep(grep_string, _in=git.tag('--sort=committerdate')))
     return last_tags
 
 
