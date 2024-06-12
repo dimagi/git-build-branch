@@ -21,6 +21,7 @@ from .gitutils import (  # noqa E402
     git_recent_tags,
     has_local,
     has_merge_conflict,
+    left_pad,
     origin,
     print_merge_details,
 )
@@ -213,10 +214,7 @@ def rebuild_staging(config, path, print_details=True, push=True):
     if not_found:
         print("You must remove the following branches before rebuilding:")
         for cwd, branch in not_found:
-            print(red("  [{cwd}] {branch}".format(
-                cwd=format_cwd(cwd),
-                branch=branch,
-            )))
+            print_not_found(cwd, branch, config)
     if merge_conflicts:
         print("You must fix the following merge conflicts before rebuilding:")
         for cwd, branch, config in merge_conflicts:
@@ -231,6 +229,22 @@ def rebuild_staging(config, path, print_details=True, push=True):
 
     if merge_conflicts or not_found:
         exit(1)
+
+
+def print_not_found(cwd, branch, config):
+    print(red(f"  [{format_cwd(cwd)}] {branch}"))
+    matching = get_git(cwd).log(
+        f'origin/{config.trunk}',
+        '--color=always',
+        '--all-match',
+        '--grep=Merge pull request',
+        f'--grep={branch}$',
+    ).strip()
+    if matching:
+        print("    This branch may have been merged:")
+        print(left_pad('      ', f"{matching}"))
+    else:
+        print(f"    No merge commit found for {branch}")
 
 
 def print_conflicts(branch, config, git):

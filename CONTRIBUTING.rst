@@ -6,15 +6,35 @@ Dev Setup
 
 Here's how to set up `git-build-branch` for local development.
 
-1. Install your local copy into a virtualenv. Assuming you have virtualenvwrapper installed, this is how you set up
-for local development::
+1. Install your local copy into a virtualenv. Assuming you have pyenv installed,
+this is how you set up for local development::
 
-    $ mkvirtualenv git-build-branch
+    $ git clone <repo URL>
     $ cd git-build-branch/  # cloned repo
+    $ pyenv virtualenv 3.9 git-build-branch
+    $ pyenv activate git-build-branch
     $ pip install -r requirements_dev.txt (or requirements_dev_py2.txt for python2)
-
+    $ pip install -e .
 
 See ``make`` output for common tools.
+
+Local testing
+-------------
+
+Here's how you can run this during development using your real project's repo.
+First make sure you're in the virtual environment and in the git-build-branch
+root directory::
+
+  $ git-build-branch --help
+
+Now make a copy of the config file and put it in the root of this repo. Call it
+``config.yml`` if you like, or update the commands below accordingly. You'll
+also need the path to the real project repo you'll be rebuilding. Finally, you
+can run the command like this::
+
+  $ git-build-branch config.yml --path ~/my-project
+
+By default, this won't push anything, but do so, add the ``--push`` flag.
 
 Releasing
 ---------
