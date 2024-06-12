@@ -176,7 +176,7 @@ def git_bisect_merge_conflict(branch1, branch2, git=None):
             git.bisect('reset')
 
 
-def _left_pad(padding, text):
+def left_pad(padding, text):
     return padding + ('\n' + padding).join(text.split('\n'))
 
 
@@ -194,7 +194,7 @@ def print_one_way_merge_details(branch1, branch2, git, known_branches=None):
     commit = git_bisect_merge_conflict(branch1, branch2, git)
     if commit:
         print('  * First conflicting commit on {0}:\n'.format(branch2))
-        print(_left_pad(' ' * 4, git.log('-n1', commit)))
+        print(left_pad(' ' * 4, git.log('-n1', commit)))
         branches = git.branch('--remote', '--contains', commit)
         other_branches = [
             format_branch(*b)
@@ -204,9 +204,9 @@ def print_one_way_merge_details(branch1, branch2, git, known_branches=None):
         ]
         if other_branches:
             msg = 'This commit also appears on these branches:'
-            print(_left_pad(' ' * 4, msg))
+            print(left_pad(' ' * 4, msg))
             for branch in other_branches:
-                print(_left_pad(' ' * 4, '* {}'.format(branch)))
+                print(left_pad(' ' * 4, '* {}'.format(branch)))
     else:
         print('  * No conflicting commits on {0}'.format(branch2))
 
@@ -234,4 +234,4 @@ if __name__ == '__main__':
     else:
         print('usage: python gitutils.py <command> [args...]\n')
         print('Available commands:')
-        print(_left_pad('   ', '\n'.join(options)))
+        print(left_pad('   ', '\n'.join(options)))
