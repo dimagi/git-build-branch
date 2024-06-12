@@ -232,10 +232,7 @@ def rebuild_staging(config, path, print_details=True, push=True):
 
 
 def print_not_found(cwd, branch, config):
-    print(red("  [{cwd}] {branch}".format(
-        cwd=format_cwd(cwd),
-        branch=branch,
-    )))
+    print(red(f"  [{format_cwd(cwd)}] {branch}"))
     matching = get_git(cwd).log(
         f'origin/{config.trunk}',
         '--color=always',
