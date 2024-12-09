@@ -2,6 +2,7 @@ import os
 import re
 
 import sh
+import sys
 
 from .sh_verbose import ShVerbose
 
@@ -216,6 +217,29 @@ def print_merge_details(branch1, branch2, git, known_branches=None):
                                 known_branches=known_branches)
     print_one_way_merge_details(branch2, branch1, git,
                                 known_branches=known_branches)
+
+
+def ensure_repository_is_up_to_date(git, remote_url, local_path):
+    """
+    Clones repository to local_path if it does not already exist, otherwise
+    pulls the latest changes from main
+    :param git: sh command instance
+    :param remote_url: url of repository to clone/update
+    :param local_path: local path to directory to clone repository into
+    """
+    if not os.path.exists(local_path):
+        git.clone(remote_url, local_path)
+    else:
+        # -C repo needs to come right after git in shell, so cannot use C=repo
+        git("-C", local_path, "pull", "origin", "main")
+
+
+def show_most_recent_change(git, repo, filepath):
+    """
+    :param repo: local path to repository
+    :param filepath: relative path to file from base of repository
+    """
+    git("-C", repo, "show", "-n", 1, "--", filepath, _in=sys.stdin, _out=sys.stdout)
 
 
 if __name__ == '__main__':

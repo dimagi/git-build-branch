@@ -16,6 +16,7 @@ from contextlib2 import ExitStack  # noqa E402
 from .gitutils import (  # noqa E402
     MissingRemote,
     OriginalBranch,
+    ensure_repository_is_up_to_date,
     get_git,
     get_local_ref,
     git_recent_tags,
@@ -24,6 +25,7 @@ from .gitutils import (  # noqa E402
     left_pad,
     origin,
     print_merge_details,
+    show_most_recent_change,
 )
 
 from .sh_verbose import ShVerbose  # noqa E402
@@ -318,6 +320,10 @@ red = _wrap_with('31')
 def main():
     parser = argparse.ArgumentParser(description='Rebuild the deploy branch for an environment')
     parser.add_argument("config_path", help="Path to the YAML configuration file")
+    remote_repo_group = parser.add_argument_group("remote repo")
+    remote_repo_group.add_argument("--remote-url", help="Remote url to clone repository from")
+    remote_repo_group.add_argument("--repo-root", help="Path where repository is checked out")
+    remote_repo_group.add_argument("--repo-filepath", help="Relative path to YAML configuration file")
     parser.add_argument("actions", nargs="*")
     parser.add_argument("-p", "--path", default=".", help="Path to the repository")
     parser.add_argument("-v", "--verbose", action="store_true")
@@ -325,15 +331,31 @@ def main():
     args = parser.parse_args()
 
     git = get_git()
+
+    config_path = args.config_path
+    remote_repo_args = [args.remote_url, args.repo_root, args.repo_filepath]
+    if any(remote_repo_args) and not all(remote_repo_args):
+        arg_names = [action.option_strings[0] for action in
+                     remote_repo_group._group_actions]
+        print(
+            red(f"All of the following arguments are required to use a remote "
+                f"repository: {arg_names}"))
+        exit(1)
+
+    if args.remote_url and args.repo_root and args.repo_filepath:
+        ensure_repository_is_up_to_date(git, args.remote_url, args.repo_root)
+        show_most_recent_change(git, args.repo_root, args.repo_filepath)
+        config_path = f"{args.repo_root}/{args.repo_filepath}"
+
     print("Fetching master")
     git.fetch("origin", "master")
     if args.push:
         print("Checking branch config for modifications")
-        if git.diff("origin/master", "--", args.config_path):
-            print(red("'{}' on this branch different from the one on master".format(args.config_path)))
+        if git.diff("origin/master", "--", config_path):
+            print(red("'{}' on this branch different from the one on master".format(config_path)))
             exit(1)
 
-    with open(args.config_path) as config_yaml:
+    with open(config_path) as config_yaml:
         config = yaml.safe_load(config_yaml)
 
     code_root = os.path.abspath(args.path)
