@@ -34,7 +34,7 @@ sh = sh.bake(_return_cmd=True)
 
 
 class BranchConfig(jsonobject.JsonObject):
-    trunk = jsonobject.StringProperty()
+    trunk = jsonobject.StringProperty(default="master")
     name = jsonobject.StringProperty()
     branches = jsonobject.ListProperty(str)
     submodules = jsonobject.DictProperty(lambda: BranchConfig)
@@ -330,7 +330,7 @@ def main():
     with open(args.config_path) as config_yaml:
         config_raw = yaml.safe_load(config_yaml)
     repo_config = BranchConfig.wrap(config_raw)
-    trunk = repo_config.trunk or "master"
+    trunk = repo_config.trunk
 
     git = get_git()
     print("Fetching {}".format(trunk))
