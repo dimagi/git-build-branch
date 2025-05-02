@@ -34,22 +34,25 @@ sh = sh.bake(_return_cmd=True)
 
 
 class BranchConfig(jsonobject.JsonObject):
-    trunk = jsonobject.StringProperty()
+    trunk = jsonobject.StringProperty(default="master")
     name = jsonobject.StringProperty()
     branches = jsonobject.ListProperty(str)
     submodules = jsonobject.DictProperty(lambda: BranchConfig)
     pull_requests = jsonobject.ListProperty(str)
 
     def normalize(self):
+        if not self.submodules:
+            return
         for submodule, subconfig in self.submodules.items():
             subconfig.trunk = subconfig.trunk or self.trunk
             subconfig.name = subconfig.name or self.name
             subconfig.normalize()
 
     def span_configs(self, path=('.',)):
-        for submodule, subconfig in self.submodules.items():
-            for item in subconfig.span_configs(path + (submodule,)):
-                yield item
+        if self.submodules:
+            for submodule, subconfig in self.submodules.items():
+                for item in subconfig.span_configs(path + (submodule,)):
+                    yield item
         yield os.path.join(*path), self
 
     def check_trunk_is_recent(self, path=None):
@@ -204,7 +207,7 @@ def rebuild_staging(config, path, print_details=True, push=True):
         if push and not (merge_conflicts or not_found):
             for path, config in all_configs:
                 # stupid safety check
-                assert config.name != 'master', path
+                assert config.name != config.trunk, path
                 print("  [{cwd}] Force pushing to origin {name}".format(
                     cwd=path,
                     name=config.name,
@@ -324,24 +327,25 @@ def main():
     parser.add_argument("--push", action="store_true", help="Push the changes to remote git repository.")
     args = parser.parse_args()
 
+    with open(args.config_path) as config_yaml:
+        config_raw = yaml.safe_load(config_yaml)
+    repo_config = BranchConfig.wrap(config_raw)
+    trunk = repo_config.trunk
+
     git = get_git()
-    print("Fetching master")
-    git.fetch("origin", "master")
+    print("Fetching {}".format(trunk))
+    git.fetch("origin", trunk)
     if args.push:
         print("Checking branch config for modifications")
-        if git.diff("origin/master", "--", args.config_path):
-            print(red("'{}' on this branch different from the one on master".format(args.config_path)))
+        if git.diff("origin/{}".format(trunk), "--", args.config_path):
+            print(red("'{}' on this branch different from the one on {}".format(args.config_path, trunk)))
             exit(1)
-
-    with open(args.config_path) as config_yaml:
-        config = yaml.safe_load(config_yaml)
 
     code_root = os.path.abspath(args.path)
     if not os.path.exists(code_root):
         print(red("Repository path does not exist: {}".format(code_root)))
         exit(1)
 
-    repo_config = BranchConfig.wrap(config)
     repo_config.normalize()
 
     if not repo_config.check_trunk_is_recent(code_root):
