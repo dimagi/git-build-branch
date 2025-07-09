@@ -332,7 +332,12 @@ def main():
     repo_config = BranchConfig.wrap(config_raw)
     trunk = repo_config.trunk
 
-    git = get_git()
+    code_root = os.path.abspath(args.path)
+    if not os.path.exists(code_root):
+        print(red("Repository path does not exist: {}".format(code_root)))
+        exit(1)
+    
+    git = get_git(code_root)
     print("Fetching {}".format(trunk))
     git.fetch("origin", trunk)
     if args.push:
@@ -340,11 +345,6 @@ def main():
         if git.diff("origin/{}".format(trunk), "--", args.config_path):
             print(red("'{}' on this branch different from the one on {}".format(args.config_path, trunk)))
             exit(1)
-
-    code_root = os.path.abspath(args.path)
-    if not os.path.exists(code_root):
-        print(red("Repository path does not exist: {}".format(code_root)))
-        exit(1)
 
     repo_config.normalize()
 
