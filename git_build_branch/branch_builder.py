@@ -325,6 +325,7 @@ def main():
     parser.add_argument("-p", "--path", default=".", help="Path to the repository")
     parser.add_argument("-v", "--verbose", action="store_true")
     parser.add_argument("--push", action="store_true", help="Push the changes to remote git repository.")
+    parser.add_argument("--skip-verify", action="store_true", help="Skip verification of config against origin")
     args = parser.parse_args()
 
     with open(args.config_path) as config_yaml:
@@ -340,7 +341,7 @@ def main():
     git = get_git(code_root)
     print("Fetching {}".format(trunk))
     git.fetch("origin", trunk)
-    if args.push:
+    if args.push and not args.skip_verify:
         print("Checking branch config for modifications")
         if git.diff("origin/{}".format(trunk), "--", args.config_path):
             print(red("'{}' on this branch different from the one on {}".format(args.config_path, trunk)))
