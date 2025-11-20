@@ -1,11 +1,7 @@
 from __future__ import print_function, absolute_import
 
-from gevent import monkey
-
-monkey.patch_all()
-
 import argparse  # noqa E402
-import gevent  # noqa E402
+import asyncio  # noqa E402
 import jsonobject  # noqa E402
 import os  # noqa E402
 import re  # noqa E402
@@ -63,7 +59,7 @@ class BranchConfig(jsonobject.JsonObject):
         return self.trunk in git_recent_tags(path)
 
 
-def fetch_remote(base_config, path, name="origin"):
+async def fetch_remote(base_config, path, name="origin"):
     jobs = []
     seen = set()
     fetched = set()
@@ -74,7 +70,7 @@ def fetch_remote(base_config, path, name="origin"):
         git = get_git(path)
         remotes = set(git.remote().split())
         print("  [{cwd}] fetching {name}".format(cwd=path, name=name))
-        jobs.append(gevent.spawn(git.fetch, name))
+        jobs.append(_async_fetch(git, name))
         for branch in (b for b in config.branches if ":" in b):
             remote, branch = branch.split(":", 1)
             if remote not in remotes:
@@ -84,16 +80,22 @@ def fetch_remote(base_config, path, name="origin"):
                 git.remote("add", remote, url)
                 remotes.add(remote)
             print("  [{path}] fetching {remote} {branch}".format(**locals()))
-            jobs.append(gevent.spawn(git.fetch, remote, branch))
+            jobs.append(_async_fetch(git, remote, branch))
             fetched.add(remote)
 
         for pr in config.pull_requests:
             print("  [{path}] fetching pull request {pr}".format(**locals()))
             pr = 'pull/{pr}/head:enterprise-{pr}'.format(pr=pr)
-            jobs.append(gevent.spawn(git.fetch, 'origin', pr))
+            jobs.append(_async_fetch(git, 'origin', pr))
 
-    gevent.joinall(jobs)
+    await asyncio.gather(*jobs)
     print("fetched {}".format(", ".join(['origin'] + sorted(fetched))))
+
+
+def _async_fetch(git, *args):
+    async def fetch(*args):
+        git.fetch(*args)
+    return asyncio.create_task(fetch(*args))
 
 
 def remote_url(git, remote, original="origin"):
@@ -337,7 +339,7 @@ def main():
     if not os.path.exists(code_root):
         print(red("Repository path does not exist: {}".format(code_root)))
         exit(1)
-    
+
     git = get_git(code_root)
     print("Fetching {}".format(trunk))
     git.fetch("origin", trunk)
@@ -360,7 +362,7 @@ def main():
     with DisableGitHooks(), ShVerbose(args.verbose):
         print("\nRebuilding '{}' branch.".format(repo_config.name))
         if 'fetch' in args.actions:
-            fetch_remote(repo_config, code_root)
+            asyncio.run(fetch_remote(repo_config, code_root))
         if 'sync' in args.actions:
             sync_local_copies(repo_config, code_root, push=args.push)
         if 'rebuild' in args.actions:

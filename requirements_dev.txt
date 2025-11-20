@@ -30,10 +30,6 @@ flake8==5.0.4
     #   flake8-isort
 flake8-isort==4.2.0
     # via -r requirements_dev.in
-gevent==21.12.0
-    # via git-build-branch (setup.py)
-greenlet==1.1.2
-    # via gevent
 idna==3.3
     # via requests
 importlib-metadata==4.12.0
@@ -106,10 +102,6 @@ wheel==0.37.1
     #   pip-tools
 zipp==3.8.1
     # via importlib-metadata
-zope-event==4.5.0
-    # via gevent
-zope-interface==5.4.0
-    # via gevent
 
 # The following packages are considered to be unsafe in a requirements file:
 # pip
