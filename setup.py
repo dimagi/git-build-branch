@@ -9,7 +9,6 @@ with open('README.rst') as readme_file:
 
 requirements = [
     'Click>=7.0',
-    'gevent>=1.4.0',
     'jsonobject>=0.9.9',
     'sh>=2.0.0',
     'PyYAML>=5.1',
