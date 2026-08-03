@@ -62,6 +62,19 @@ def git_submodules(git=None):
     return submodules
 
 
+def get_worktree_branches(git):
+    """Return {branch_name: worktree_path} for branches checked out in a
+    linked worktree, as reported by `git worktree list`."""
+    branches = {}
+    worktree_path = None
+    for line in str(git.worktree('list', '--porcelain')).splitlines():
+        if line.startswith('worktree '):
+            worktree_path = line[len('worktree '):].strip()
+        elif line.startswith('branch refs/heads/'):
+            branches[line[len('branch refs/heads/'):].strip()] = worktree_path
+    return branches
+
+
 def get_local_ref(git, branch):
     remote = ":" in branch
     if isinstance(branch, LocalRef) or not remote and has_local(git, branch):
