@@ -14,6 +14,7 @@ from .gitutils import (  # noqa E402
     OriginalBranch,
     get_git,
     get_local_ref,
+    get_worktree_branches,
     git_recent_tags,
     has_local,
     has_merge_conflict,
@@ -108,36 +109,44 @@ def sync_local_copies(config, path, push=True):
     base_config = config
     unpushed_branches = []
 
-    def _count_commits(compare_spec):
+    def _count_commits(compare_spec, git):
         return int(sh.wc('-l', _in=git.log(compare_spec, '--oneline', _piped=True)))
 
     for path, config in base_config.span_configs((path,)):
         git = get_git(path)
+        worktree_branches = get_worktree_branches(git)
         with OriginalBranch(git):
             for branch in [config.trunk] + config.branches:
                 if ":" in branch or not has_local(git, branch):
                     continue
-                git.checkout(branch)
-                unpushed = _count_commits('origin/{0}..{0}'.format(branch))
-                unpulled = _count_commits('{0}..origin/{0}'.format(branch))
+                branch_path = worktree_branches.get(branch)
+                # A branch already checked out in another worktree can't be
+                # checked out here too, so operate on it where it already is.
+                elsewhere = branch_path and os.path.realpath(branch_path) != os.path.realpath(path)
+                branch_git = get_git(branch_path) if elsewhere else git
+                cwd = format_cwd(branch_path) if elsewhere else format_cwd(path)
+                if not elsewhere:
+                    git.checkout(branch)
+                unpushed = _count_commits('origin/{0}..{0}'.format(branch), branch_git)
+                unpulled = _count_commits('{0}..origin/{0}'.format(branch), branch_git)
                 if unpulled or unpushed:
                     print(("  [{cwd}] {branch}: {unpushed} ahead "
                            "and {unpulled} behind origin").format(
-                        cwd=path,
+                        cwd=cwd,
                         branch=branch,
                         unpushed=unpushed,
                         unpulled=unpulled,
                     ))
                 else:
                     print("  [{cwd}] {branch}: Everything up-to-date.".format(
-                        cwd=path,
+                        cwd=cwd,
                         branch=branch,
                     ))
                 if unpushed:
-                    unpushed_branches.append((path, branch))
+                    unpushed_branches.append((cwd, branch))
                 elif unpulled:
                     print("  Fastforwarding your branch to origin")
-                    git.merge('--ff-only', origin(branch))
+                    branch_git.merge('--ff-only', origin(branch))
     if unpushed_branches and push:
         print("The following branches have commits that need to be pushed:")
         for path, branch in unpushed_branches:
